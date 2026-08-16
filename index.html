@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <title>MyHealth Passport｜多國語言隨身電子病歷</title>
+  <style>
+    :root{
+      --bg:#eef8ff;
+      --bg2:#f8fcff;
+      --card:rgba(255,255,255,.90);
+      --line:#d7ebf8;
+      --primary:#3b9fd6;
+      --primary-dark:#1f78ac;
+      --primary-soft:#dff3ff;
+      --text:#183247;
+      --muted:#6c8496;
+      --danger:#d85767;
+      --warning:#f3a94e;
+      --success:#3ca879;
+      --shadow:0 16px 42px rgba(50,130,178,.13);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,"Noto Sans TC","Noto Sans JP","Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 10% 0%,rgba(84,190,240,.22),transparent 30%),
+        radial-gradient(circle at 96% 10%,rgba(128,210,255,.18),transparent 25%),
+        linear-gradient(180deg,var(--bg2),var(--bg));
+      min-height:100vh;
+    }
+    button,select,input,textarea{font:inherit}
+    .app{
+      max-width:1240px;
+      margin:0 auto;
+      padding:28px 20px 64px;
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:22px;
+      flex-wrap:wrap;
+    }
+    .brand{
+      display:flex;align-items:center;gap:14px;
+    }
+    .brand-mark{
+      width:52px;height:52px;border-radius:18px;
+      display:grid;place-items:center;
+      color:white;font-weight:800;font-size:20px;
+      background:linear-gradient(145deg,#65c7f1,#318fc7);
+      box-shadow:0 10px 24px rgba(49,143,199,.28);
+      position:relative;
+      overflow:hidden;
+    }
+    .brand-mark:after{
+      content:"";
+      position:absolute;inset:8px;
+      border:1px solid rgba(255,255,255,.48);
+      border-radius:12px;
+    }
+    .brand h1{margin:0;font-size:1.28rem;letter-spacing:.02em}
+    .brand p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
+    .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .control{
+      border:1px solid var(--line);
+      background:white;
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 13px;
+      box-shadow:0 6px 18px rgba(80,150,190,.08);
+      cursor:pointer;
+    }
+    .control.primary{
+      background:linear-gradient(145deg,#5cc1ef,#318fc7);
+      color:#fff;border-color:transparent;font-weight:700;
+    }
+    .hero{
+      position:relative;
+      overflow:hidden;
+      background:
+        linear-gradient(125deg,rgba(255,255,255,.96),rgba(225,246,255,.94));
+      border:1px solid rgba(180,222,245,.8);
+      border-radius:30px;
+      box-shadow:var(--shadow);
+      padding:30px;
+      display:grid;
+      grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);
+      gap:28px;
+      margin-bottom:22px;
+    }
+    .hero:after{
+      content:"";
+      position:absolute;
+      width:280px;height:280px;border-radius:50%;
+      right:-90px;top:-120px;
+      background:radial-gradient(circle,rgba(80,185,231,.28),rgba(80,185,231,0) 70%);
+      pointer-events:none;
+    }
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 10px;
+      background:var(--primary-soft);
+      color:var(--primary-dark);
+      border-radius:999px;
+      font-size:.8rem;font-weight:700;
+      margin-bottom:14px;
+    }
+    .hero h2{font-size:clamp(1.65rem,4vw,2.65rem);margin:0 0 12px;line-height:1.14}
+    .hero p{margin:0;color:var(--muted);line-height:1.75;max-width:760px}
+    .profile{
+      display:grid;
+      grid-template-columns:92px 1fr;
+      gap:18px;
+      align-items:center;
+      background:rgba(255,255,255,.70);
+      border:1px solid rgba(204,233,248,.9);
+      border-radius:22px;
+      padding:18px;
+      min-width:0;
+    }
+    .avatar{
+      width:92px;height:92px;border-radius:24px;
+      display:grid;place-items:center;
+      background:linear-gradient(145deg,#d8f2ff,#9bdcf8);
+      color:#247aa8;font-size:2rem;font-weight:800;
+      border:5px solid rgba(255,255,255,.8);
+      box-shadow:0 8px 24px rgba(73,154,197,.18);
+    }
+    .profile .name{font-weight:800;font-size:1.35rem;margin-bottom:5px}
+    .profile .meta{color:var(--muted);font-size:.9rem;line-height:1.55}
+    .status-row{
+      display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;
+    }
+    .badge{
+      padding:6px 9px;border-radius:999px;
+      font-size:.76rem;font-weight:700;
+      background:#eef8fd;color:#2e7ba3;border:1px solid #d5edf8;
+    }
+    .badge.danger{background:#fff0f2;color:#bb3f50;border-color:#ffd8dd}
+    .quick-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;margin-bottom:22px;
+    }
+    .quick-card,.section-card{
+      background:var(--card);
+      border:1px solid rgba(202,231,247,.88);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(12px);
+    }
+    .quick-card{
+      border-radius:20px;
+      padding:18px;
+    }
+    .quick-label{font-size:.8rem;color:var(--muted);margin-bottom:7px}
+    .quick-value{font-size:1.15rem;font-weight:800}
+    .quick-value.alert{color:var(--danger)}
+    .layout{
+      display:grid;
+      grid-template-columns:250px minmax(0,1fr);
+      gap:22px;
+      align-items:start;
+    }
+    .sidebar{
+      position:sticky;top:18px;
+      padding:14px;
+      border-radius:22px;
+      background:rgba(255,255,255,.78);
+      border:1px solid rgba(205,234,248,.9);
+      box-shadow:var(--shadow);
+    }
+    .sidebar a{
+      display:flex;align-items:center;gap:10px;
+      padding:11px 12px;
+      color:#426275;text-decoration:none;
+      border-radius:13px;
+      margin:3px 0;
+      font-size:.9rem;
+    }
+    .sidebar a:hover{background:#eaf7fd;color:#257aaa}
+    .sidebar .dot{
+      width:9px;height:9px;border-radius:50%;background:#71c4e9;flex:none;
+    }
+    main{display:grid;gap:18px}
+    .section-card{
+      border-radius:var(--radius);
+      overflow:hidden;
+    }
+    .section-head{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:18px 20px;
+      border-bottom:1px solid #e8f3f9;
+      background:linear-gradient(180deg,rgba(249,253,255,.95),rgba(243,250,254,.8));
+    }
+    .section-title{
+      display:flex;align-items:center;gap:11px;font-weight:800;font-size:1.05rem;
+    }
+    .section-icon{
+      width:35px;height:35px;border-radius:12px;
+      display:grid;place-items:center;
+      background:#e3f5fe;color:#2e8ec0;
+      font-size:1.05rem;
+    }
+    .section-body{padding:20px}
+    .fields{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px 18px;
+    }
+    .field{
+      min-width:0;
+      padding:12px 14px;
+      background:#f9fcfe;
+      border:1px solid #e7f1f7;
+      border-radius:14px;
+    }
+    .field.full{grid-column:1/-1}
+    .label{
+      font-size:.78rem;color:var(--muted);margin-bottom:5px;font-weight:650;
+    }
+    .value{font-weight:700;line-height:1.55;word-break:break-word}
+    .value[contenteditable="true"]{
+      outline:2px solid rgba(66,162,210,.22);
+      background:#fff;
+      border-radius:7px;
+      padding:4px 6px;
+      min-height:29px;
+    }
+    .timeline{display:grid;gap:12px}
+    .timeline-item{
+      display:grid;
+      grid-template-columns:110px 1fr;
+      gap:14px;
+      padding:14px 0;
+      border-bottom:1px dashed #dcecf5;
+    }
+    .timeline-item:last-child{border-bottom:none}
+    .time{font-weight:800;color:#3787b1}
+    .desc{line-height:1.6}
+    .med-table{width:100%;border-collapse:collapse}
+    .med-table th,.med-table td{
+      padding:11px 12px;
+      border-bottom:1px solid #e8f1f6;
+      text-align:left;
+      vertical-align:top;
+    }
+    .med-table th{font-size:.78rem;color:var(--muted);background:#f7fbfd}
+    .med-table td{font-size:.9rem}
+    .notice{
+      display:flex;gap:12px;align-items:flex-start;
+      padding:14px 16px;border-radius:14px;
+      background:#fff8ed;border:1px solid #ffe2b7;color:#835d28;
+      line-height:1.6;font-size:.88rem;
+    }
+    .footer{
+      text-align:center;color:var(--muted);font-size:.8rem;
+      padding-top:26px;line-height:1.6;
+    }
+    .privacy-mask .sensitive{
+      filter:blur(7px);user-select:none;
+    }
+    .editing-hint{
+      display:none;
+      padding:10px 14px;
+      margin-bottom:14px;
+      background:#eaf8ff;color:#23749e;
+      border:1px solid #d4eefb;border-radius:13px;font-size:.86rem;
+    }
+    body.edit-mode .editing-hint{display:block}
+    @media (max-width:920px){
+      .hero{grid-template-columns:1fr}
+      .quick-grid{grid-template-columns:repeat(2,1fr)}
+      .layout{grid-template-columns:1fr}
+      .sidebar{position:static;display:flex;overflow:auto;gap:6px}
+      .sidebar a{white-space:nowrap}
+    }
+    @media (max-width:620px){
+      .app{padding:18px 12px 45px}
+      .topbar{align-items:flex-start}
+      .brand-mark{width:46px;height:46px}
+      .hero{padding:22px;border-radius:24px}
+      .profile{grid-template-columns:72px 1fr}
+      .avatar{width:72px;height:72px;border-radius:19px}
+      .quick-grid{grid-template-columns:1fr 1fr}
+      .fields{grid-template-columns:1fr}
+      .field.full{grid-column:auto}
+      .timeline-item{grid-template-columns:1fr;gap:4px}
+      .med-table{display:block;overflow:auto;white-space:nowrap}
+      .actions{width:100%}
+      .control{flex:1}
+    }
+    @media print{
+      body{background:white}
+      .app{max-width:none;padding:0}
+      .topbar .actions,.sidebar,.editing-hint{display:none!important}
+      .hero,.quick-card,.section-card{box-shadow:none}
+      .layout{display:block}
+      main{gap:10px}
+      .section-card{break-inside:avoid}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">MH</div>
+      <div>
+        <h1 data-i18n="appTitle">MyHealth Passport</h1>
+        <p data-i18n="appSubtitle">多國語言隨身電子病歷</p>
+      </div>
+    </div>
+    <div class="actions">
+      <select id="langSelect" class="control" aria-label="Language">
+        <option value="zh">繁體中文</option>
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+        <option value="ko">한국어</option>
+        <option value="vi">Tiếng Việt</option>
+      </select>
+      <button class="control" id="privacyBtn" data-i18n="privacy">隱私模式</button>
+      <button class="control" id="editBtn" data-i18n="edit">編輯資料</button>
+      <button class="control primary" onclick="window.print()" data-i18n="print">列印 / PDF</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <div class="eyebrow">✦ <span data-i18n="eyebrow">Portable Multilingual Health Record</span></div>
+      <h2 data-i18n="heroTitle">我的隨身健康護照</h2>
+      <p data-i18n="heroText">集中呈現個人基本資料、過敏資訊、疾病史、手術史、用藥史、家族史與緊急聯絡資料，跨語言快速切換，適合旅遊、就醫與緊急狀況使用。</p>
+    </div>
+    <div class="profile">
+      <div class="avatar">JJ</div>
+      <div>
+        <div class="name sensitive editable" data-key="name">簡文山</div>
+        <div class="meta sensitive">
+          <span data-i18n="recordId">病歷識別碼</span>：<span class="editable" data-key="recordIdValue">MH-2026-001</span><br>
+          <span data-i18n="updated">最後更新</span>：<span class="editable" data-key="updatedValue">2026-08-08</span>
+        </div>
+        <div class="status-row">
+          <span class="badge">O</span>
+          <span class="badge danger">海鮮過敏</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quick-grid">
+    <div class="quick-card">
+      <div class="quick-label" data-i18n="bloodType">血型</div>
+      <div class="quick-value editable" data-key="bloodTypeValue">O</div>
+    </div>
+    <div class="quick-card">
+      <div class="quick-label" data-i18n="allergy">主要過敏</div>
+      <div class="quick-value alert editable" data-key="allergyValue">海鮮過敏</div>
+    </div>
+    <div class="quick-card">
+      <div class="quick-label" data-i18n="chronic">慢性疾病</div>
+      <div class="quick-value editable" data-key="chronicValue">第二型糖尿病</div>
+    </div>
+    <div class="quick-card">
+      <div class="quick-label" data-i18n="emergency">緊急聯絡</div>
+      <div class="quick-value sensitive editable" data-key="emergencyValue">王美麗</div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <a href="#basic"><span class="dot"></span><span data-i18n="navBasic">基本資料</span></a>
+      <a href="#allergies"><span class="dot"></span><span data-i18n="navAllergy">過敏與警示</span></a>
+      <a href="#conditions"><span class="dot"></span><span data-i18n="navDisease">疾病史</span></a>
+      <a href="#surgery"><span class="dot"></span><span data-i18n="navSurgery">手術 / 住院史</span></a>
+      <a href="#meds"><span class="dot"></span><span data-i18n="navMeds">用藥史</span></a>
+      <a href="#family"><span class="dot"></span><span data-i18n="navFamily">家族史</span></a>
+      <a href="#social"><span class="dot"></span><span data-i18n="navSocial">生活與社會史</span></a>
+      <a href="#immunization"><span class="dot"></span><span data-i18n="navVaccine">疫苗史</span></a>
+      <a href="#devices"><span class="dot"></span><span data-i18n="navDevices">植入物 / 輔具</span></a>
+      <a href="#emergencyContact"><span class="dot"></span><span data-i18n="navEmergency">緊急聯絡</span></a>
+    </nav>
+
+    <main>
+      <div class="editing-hint" data-i18n="editingHint">編輯模式已開啟：點選藍框文字即可修改；內容會自動儲存在此瀏覽器。</div>
+
+      <section class="section-card" id="basic">
+        <div class="section-head">
+          <div class="section-title"><div class="section-icon">👤</div><span data-i18n="basicTitle">個人基本資料</span></div>
+        </div>
+        <div class="section-body">
+          <div class="fields">
+            <div class="field"><div class="label" data-i18n="fullName">姓名</div><div class="value sensitive editable" data-key="fullNameValue">簡文山</div></div>
+            <div class="field"><div class="label" data-i18n="dob">出生日期</div><div class="value sensitive editable" data-key="dobValue">1964-08-31</div></div>
+            <div class="field"><div class="label" data-i18n="sex">生理性別</div><div class="value editable" data-key="sexValue">男</div></div>
+            <div class="field"><div class="label" data-i18n="nationality">國籍</div><div class="value editable" data-key="nationalityValue">Taiwan</div></div>
+            <div class="field"><div class="label" data-i18n="heightWeight">身高 / 體重</div><div class="value editable" data-key="heightWeightValue">172 cm / 68 kg</div></div>
+            <div class="field"><div class="label" data-i18n="blood">血型 / Rh</div><div class="value editable" data-key="bloodRhValue">O / Rh 未知</div></div>
+            <div class="field full"><div class="label" data-i18n="address">聯絡地址</div><div class="value sensitive editable" data-key="addressValue">台北市萬華區新店路105號</div></div>
+            <div class="field"><div class="label" data-i18n="phone">電話</div><div class="value sensitive editable" data-key="phoneValue">+886 9xx-xxx-xxx</div></div>
+            <div class="field"><div class="label" data-i18n="insurance">保險 / 健保資訊</div><div class="value sensitive editable" data-key="insuranceValue">NHI / ********</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card" id="allergies">
+        <div class="section-head">
+          <div class="section-title"><div class="section-icon">⚠️</div><span data-i18n="allergyTitle">過敏資訊與重要警示</span></div>
+        </div>
+        <div class="section-body">
+          <div class="fields">
+            <div class="field"><div class="label" data-i18n="drugAllergy">藥物過敏</div><div class="value editable" data-key="drugAllergyValue">目前無已知藥物過敏</div></div>
+            <div class="field"><div class="label" data-i18n="foodAllergy">食物過敏</div><div class="value editable" data-key="foodAllergyValue">海鮮（Seafood）→ 過敏反應</div></div>
+            <div class="field"><div class="label" data-i18n="otherAllergy">其他過敏</div><div class="value editable" data-key="otherAllergyValue">Dust mite</div></div>
+            <div class="field"><div class="label" data-i18n="specialAlert">特殊警示</div><div class="value editable" data-key="specialAlertValue">No MRI restriction</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card" id="conditions">
+        <div class="section-head">
+          <div class="section-title"><div class="section-icon">🩺</div><span data-i18n="diseaseTitle">現在疾病與過去病史</span></div>
+        </div>
+        <div class="section-body">
+          <div class="timeline">
+            <div class="timeline-item"><div class="time editable" data-key="cond1year">目前</div><div class="desc editable" data-key="cond1">第二型糖尿病（Type 2 Diabetes Mellitus）— 規則使用降血糖藥物控制</div></div>
+            <div class="timeline-item"><div class="time editable" data-key="cond2year">2018</div><div class="desc editable" data-key="cond2">Hypertension — stable with medication</div></div>
+            <div class="timeline-item"><div class="time editable" data-key="cond3year">2022</div><div class="desc editable" data-key="cond3">Hyperlipidemia — regular follow-up</div></div>
+    </div>
+        </div>
+      </section>
+
+      <section class="section-card" id="surgery">
+        <div class="section-head">
+          <div class="section-title"><div class="section-icon">🏥</div><span data-i18n="surgeryTitle">手術史、住院史與重大處置</span></div>
+        </div>
+        <div class="section-body">
+          <div class="timeline">
+            <div class="timeline-item"><div class="time editable" data-key="surg1year">2010</div><div class="desc editable" data-key="surg1">Appendectomy — uncomplicated recovery</div></div>
+            <div class="timeline-item"><div class="time editable" data-key="surg2year">2021</div><div class="desc editable" data-key="surg2">Hospitalization for pneumonia — 5 days</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card" id="meds">
+        <div class="section-head">
+          <div class="section-title"><div class="section-icon">💊</div><span data-i18n="medsTitle">目前用藥與過去用藥</span></div>
+        </div>
+        <div class="section-body">
+          <table class="med-table">
+            <thead>
+              <tr>
+                <th data-i18n="medName">藥名</th>
+                <th data-i18n="dose">劑量</th>
+                <th data-i18n="frequency">頻率</th>
+                <th data-i18n="purpose">用途</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="editable" data-key="med1">Ankomin 美克糖錠（Metformin）</td>
+                <td class="editable" data-key="med1dose">500 mg × 2 粒 / 次</td>
+                <td class="editable" data-key="med1freq">每日 2 次，早、晚飯後</td>
+                <td class="editable" data-key="med1purpose">第二型糖尿病</td>
+              </tr>
+              <tr>
+                <td class="editable" data-key="med2">Diovan F.C. 得安穩（Valsartan）</td>
+                <td class="editable" data-key="med2dose">160 mg × 0.5 粒 / 次</td>
+                <td class="editable" data-key="med2freq">每日 1 次，固定時間</td>
+                <td class="editable" data-key="med2purpose">血壓控制</td>
+              </tr>
+              <tr>
+                <td class="editable" data-key="med3">Bokey EM 伯基（Aspirin）</td>
+                <td class="editable" data-key="med3dose">100 mg × 1 顆 / 次</td>
+                <td class="editable" data-key="med3freq">每日 1 次，固定時間</td>
+                <td class="editable" data-key="med3purpose">抗血小板治療</td>
+              </tr>
+              <tr>
+                <td class="editable" data-key="med4">Glyxambi 糖順平膜衣錠（Empagliflozin / Linagliptin）</td>
+                <td class="editable" data-key="med4dose">25/5 mg × 1 粒 / 次</td>
+                <td class="editable" data-key="med4freq">每日 1 次，固定時間</td>
+                <td class="editable" data-key="med4purpose">第二型糖尿病</td>
+              </tr>
+              <tr>
+                <td class="editable" data-key="med5">Amaryl 瑪爾胰（Glimepiride）</td>
+                <td class="editable" data-key="med5dose">2 mg × 1 粒 / 次</td>
+                <td class="editable" data-key="med5freq">每日 3 次，早、午、晚</td>
+                <td class="editable" data-key="med5purpose">第二型糖尿病</td>
+              </tr>
+</tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section-card" id="family">
+        <div class="section-head">
+          <div class="section-title"><div class="section-icon">🧬</div><span data-i18n="familyTitle">家族疾病史</span></div>
+        </div>
+        <div class="section-body">
+          <div class="fields">
+            <div class="field"><div class="label" data-i18n="father">父系</div><div class="value editable" data-key="fatherValue">Hypertension</div></div>
+            <div class="field"><div class="label" data-i18n="mother">母系</div><div class="value editable" data-key="motherValue">Type 2 diabetes</div></div>
+            <div class="field full"><div class="label" data-i18n="familyOther">其他重要家族史</div><div class="value editable" data-key="familyOtherValue">No known hereditary cancer syndrome</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card" id="social">
+        <div class="section-head">
+          <div class="section-title"><div class="section-icon">🌿</div><span data-i18n="socialTitle">生活史與社會史</span></div>
+        </div>
+        <div class="section-body">
+          <div class="fields">
+            <div class="field"><div class="label" data-i18n="smoking">吸菸</div><div class="value editable" data-key="smokingValue">Never</div></div>
+            <div class="field"><div class="label" data-i18n="alcohol">飲酒</div><div class="value editable" data-key="alcoholValue">Occasional</div></div>
+            <div class="field"><div class="label" data-i18n="exercise">運動</div><div class="value editable" data-key="exerciseValue">3 times/week</div></div>
+            <div class="field"><div class="label" data-i18n="diet">飲食</div><div class="value editable" data-key="dietValue">Balanced diet</div></div>
+            <div class="field"><div class="label" data-i18n="occupation">職業</div><div class="value editable" data-key="occupationValue">Professor</div></div>
+            <div class="field"><div class="label" data-i18n="travel">近期旅遊 / 暴露</div><div class="value editable" data-key="travelValue">None significant</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card" id="immunization">
+        <div class="section-head">
+          <div class="section-title"><div class="section-icon">💉</div><span data-i18n="vaccineTitle">疫苗與預防接種史</span></div>
+        </div>
+        <div class="section-body">
+          <div class="timeline">
+            <div class="timeline-item"><div class="time editable" data-key="vac1year">2025</div><div class="desc editable" data-key="vac1">Influenza vaccine</div></div>
+            <div class="timeline-item"><div class="time editable" data-key="vac2year">2024</div><div class="desc editable" data-key="vac2">COVID-19 booster</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card" id="devices">
+        <div class="section-head">
+          <div class="section-title"><div class="section-icon">⌁</div><span data-i18n="devicesTitle">植入物、醫療裝置與輔具</span></div>
+        </div>
+        <div class="section-body">
+          <div class="fields">
+            <div class="field"><div class="label" data-i18n="implant">植入物</div><div class="value editable" data-key="implantValue">None</div></div>
+            <div class="field"><div class="label" data-i18n="assistive">輔具</div><div class="value editable" data-key="assistiveValue">Glasses</div></div>
+            <div class="field full"><div class="label" data-i18n="deviceNote">裝置注意事項</div><div class="value editable" data-key="deviceNoteValue">No pacemaker / no implanted defibrillator</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card" id="emergencyContact">
+        <div class="section-head">
+          <div class="section-title"><div class="section-icon">☎</div><span data-i18n="emergencyTitle">緊急聯絡與主要醫療資訊</span></div>
+        </div>
+        <div class="section-body">
+          <div class="fields">
+            <div class="field"><div class="label" data-i18n="contactName">緊急聯絡人</div><div class="value sensitive editable" data-key="contactNameValue">王美麗</div></div>
+            <div class="field"><div class="label" data-i18n="relation">關係</div><div class="value editable" data-key="relationValue">配偶</div></div>
+            <div class="field"><div class="label" data-i18n="contactPhone">聯絡電話</div><div class="value sensitive editable" data-key="contactPhoneValue">07-39-31-31-31</div></div>
+            <div class="field"><div class="label" data-i18n="physician">主要照護醫師 / 機構</div><div class="value editable" data-key="physicianValue">Dr. Chen / Taipei Medical Center</div></div>
+            <div class="field full"><div class="label" data-i18n="advance">預立醫療 / 重要意願</div><div class="value editable" data-key="advanceValue">Please contact family before major decisions when possible.</div></div>
+          </div>
+          <div style="height:14px"></div>
+          <div class="notice">
+            <div>ⓘ</div>
+            <div data-i18n="notice">本頁是方便攜帶與溝通的個人健康摘要，不應取代醫療機構正式病歷、醫師診斷或緊急醫療判斷。資料如有異動，請定期更新。</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="footer" data-i18n="footer">
+    MyHealth Passport · Multilingual Personal Health Record<br>
+    建議僅儲存在個人受保護裝置，並避免將含敏感個資的版本公開上網。
+  </div>
+</div>
+
+<script>
+const translations = {
+  zh:{
+    appTitle:"MyHealth Passport",appSubtitle:"多國語言隨身電子病歷",privacy:"隱私模式",edit:"編輯資料",save:"完成編輯",print:"列印 / PDF",
+    eyebrow:"Portable Multilingual Health Record",heroTitle:"我的隨身健康護照",
+    heroText:"集中呈現個人基本資料、過敏資訊、疾病史、手術史、用藥史、家族史與緊急聯絡資料，跨語言快速切換，適合旅遊、就醫與緊急狀況使用。",
+    recordId:"病歷識別碼",updated:"最後更新",allergyAlert:"藥物過敏",bloodType:"血型",allergy:"主要過敏",chronic:"慢性疾病",emergency:"緊急聯絡",
+    navBasic:"基本資料",navAllergy:"過敏與警示",navDisease:"疾病史",navSurgery:"手術 / 住院史",navMeds:"用藥史",navFamily:"家族史",navSocial:"生活與社會史",navVaccine:"疫苗史",navDevices:"植入物 / 輔具",navEmergency:"緊急聯絡",
+    editingHint:"編輯模式已開啟：點選藍框文字即可修改；內容會自動儲存在此瀏覽器。",
+    basicTitle:"個人基本資料",fullName:"姓名",dob:"出生日期",sex:"生理性別",nationality:"國籍",heightWeight:"身高 / 體重",blood:"血型 / Rh",address:"聯絡地址",phone:"電話",insurance:"保險 / 健保資訊",
+    allergyTitle:"過敏資訊與重要警示",drugAllergy:"藥物過敏",foodAllergy:"食物過敏",otherAllergy:"其他過敏",specialAlert:"特殊警示",
+    diseaseTitle:"現在疾病與過去病史",surgeryTitle:"手術史、住院史與重大處置",
+    medsTitle:"目前用藥與過去用藥",medName:"藥名",dose:"劑量",frequency:"頻率",purpose:"用途",
+    familyTitle:"家族疾病史",father:"父系",mother:"母系",familyOther:"其他重要家族史",
+    socialTitle:"生活史與社會史",smoking:"吸菸",alcohol:"飲酒",exercise:"運動",diet:"飲食",occupation:"職業",travel:"近期旅遊 / 暴露",
+    vaccineTitle:"疫苗與預防接種史",devicesTitle:"植入物、醫療裝置與輔具",implant:"植入物",assistive:"輔具",deviceNote:"裝置注意事項",
+    emergencyTitle:"緊急聯絡與主要醫療資訊",contactName:"緊急聯絡人",relation:"關係",contactPhone:"聯絡電話",physician:"主要照護醫師 / 機構",advance:"預立醫療 / 重要意願",
+    notice:"本頁是方便攜帶與溝通的個人健康摘要，不應取代醫療機構正式病歷、醫師診斷或緊急醫療判斷。資料如有異動，請定期更新。",
+    footer:"MyHealth Passport · 多國語言個人健康紀錄｜建議僅儲存在個人受保護裝置，並避免將含敏感個資的版本公開上網。"
+  },
+  en:{
+    appTitle:"MyHealth Passport",appSubtitle:"Multilingual Portable Health Record",privacy:"Privacy Mode",edit:"Edit Record",save:"Finish Editing",print:"Print / PDF",
+    eyebrow:"Portable Multilingual Health Record",heroTitle:"My Personal Health Passport",
+    heroText:"A portable summary of identity, allergies, medical conditions, surgeries, medications, family history and emergency contacts, with instant language switching for travel and medical care.",
+    recordId:"Record ID",updated:"Last updated",allergyAlert:"Drug Allergy",bloodType:"Blood Type",allergy:"Key Allergy",chronic:"Chronic Condition",emergency:"Emergency Contact",
+    navBasic:"Basic Information",navAllergy:"Allergies & Alerts",navDisease:"Medical History",navSurgery:"Surgery / Hospitalization",navMeds:"Medications",navFamily:"Family History",navSocial:"Social History",navVaccine:"Immunizations",navDevices:"Devices / Aids",navEmergency:"Emergency Contact",
+    editingHint:"Edit mode is active. Click any blue-outlined text to change it. Changes are saved in this browser.",
+    basicTitle:"Personal Information",fullName:"Full Name",dob:"Date of Birth",sex:"Biological Sex",nationality:"Nationality",heightWeight:"Height / Weight",blood:"Blood Type / Rh",address:"Address",phone:"Phone",insurance:"Insurance / Health ID",
+    allergyTitle:"Allergies & Critical Alerts",drugAllergy:"Drug Allergies",foodAllergy:"Food Allergies",otherAllergy:"Other Allergies",specialAlert:"Special Alerts",
+    diseaseTitle:"Current Conditions & Medical History",surgeryTitle:"Surgery, Hospitalization & Major Procedures",
+    medsTitle:"Current & Previous Medications",medName:"Medication",dose:"Dose",frequency:"Frequency",purpose:"Purpose",
+    familyTitle:"Family Medical History",father:"Paternal History",mother:"Maternal History",familyOther:"Other Important Family History",
+    socialTitle:"Lifestyle & Social History",smoking:"Smoking",alcohol:"Alcohol",exercise:"Exercise",diet:"Diet",occupation:"Occupation",travel:"Recent Travel / Exposure",
+    vaccineTitle:"Immunization History",devicesTitle:"Implants, Medical Devices & Aids",implant:"Implants",assistive:"Assistive Devices",deviceNote:"Device Notes",
+    emergencyTitle:"Emergency & Primary Care Information",contactName:"Emergency Contact",relation:"Relationship",contactPhone:"Phone",physician:"Primary Physician / Facility",advance:"Advance Care / Important Wishes",
+    notice:"This page is a portable personal health summary for communication purposes. It does not replace an official medical record, physician diagnosis, or emergency clinical judgment. Keep the information updated.",
+    footer:"MyHealth Passport · Multilingual Personal Health Record｜Store only on a protected personal device and avoid publishing versions containing sensitive personal data."
+  },
+  ja:{
+    appTitle:"MyHealth Passport",appSubtitle:"多言語対応 携帯型健康記録",privacy:"プライバシーモード",edit:"記録を編集",save:"編集完了",print:"印刷 / PDF",
+    eyebrow:"Portable Multilingual Health Record",heroTitle:"私のヘルス・パスポート",
+    heroText:"基本情報、アレルギー、病歴、手術歴、服薬歴、家族歴、緊急連絡先をまとめ、旅行や受診時に言語をすぐ切り替えられる携帯型健康サマリーです。",
+    recordId:"記録ID",updated:"最終更新",allergyAlert:"薬剤アレルギー",bloodType:"血液型",allergy:"主なアレルギー",chronic:"慢性疾患",emergency:"緊急連絡先",
+    navBasic:"基本情報",navAllergy:"アレルギー・注意事項",navDisease:"病歴",navSurgery:"手術・入院歴",navMeds:"服薬歴",navFamily:"家族歴",navSocial:"生活・社会歴",navVaccine:"予防接種",navDevices:"植込み・補助具",navEmergency:"緊急連絡",
+    editingHint:"編集モードです。青い枠の文字をクリックして編集できます。変更内容はこのブラウザに保存されます。",
+    basicTitle:"個人基本情報",fullName:"氏名",dob:"生年月日",sex:"生物学的性別",nationality:"国籍",heightWeight:"身長 / 体重",blood:"血液型 / Rh",address:"住所",phone:"電話",insurance:"保険 / 医療ID",
+    allergyTitle:"アレルギー情報・重要な注意事項",drugAllergy:"薬剤アレルギー",foodAllergy:"食物アレルギー",otherAllergy:"その他のアレルギー",specialAlert:"特記事項",
+    diseaseTitle:"現在の疾患・既往歴",surgeryTitle:"手術歴・入院歴・主な処置",
+    medsTitle:"現在および過去の服薬",medName:"薬剤名",dose:"用量",frequency:"頻度",purpose:"目的",
+    familyTitle:"家族歴",father:"父系",mother:"母系",familyOther:"その他の重要な家族歴",
+    socialTitle:"生活歴・社会歴",smoking:"喫煙",alcohol:"飲酒",exercise:"運動",diet:"食事",occupation:"職業",travel:"最近の旅行 / 曝露",
+    vaccineTitle:"予防接種歴",devicesTitle:"植込み機器・医療機器・補助具",implant:"植込み機器",assistive:"補助具",deviceNote:"機器に関する注意",
+    emergencyTitle:"緊急連絡先・主な医療情報",contactName:"緊急連絡先",relation:"続柄",contactPhone:"電話",physician:"主治医 / 医療機関",advance:"事前指示 / 重要な希望",
+    notice:"本ページは携帯と意思疎通のための個人健康サマリーです。正式な診療録、医師の診断、緊急時の医学的判断に代わるものではありません。内容は定期的に更新してください。",
+    footer:"MyHealth Passport · 多言語個人健康記録｜保護された個人端末に保存し、機微な個人情報を含む版を公開しないでください。"
+  },
+  ko:{
+    appTitle:"MyHealth Passport",appSubtitle:"다국어 휴대용 건강기록",privacy:"개인정보 모드",edit:"기록 편집",save:"편집 완료",print:"인쇄 / PDF",
+    eyebrow:"Portable Multilingual Health Record",heroTitle:"나의 건강 패스포트",
+    heroText:"개인정보, 알레르기, 질환 이력, 수술 이력, 복용약, 가족력, 비상 연락처를 한곳에 정리하고 여행 및 진료 시 언어를 빠르게 전환할 수 있습니다.",
+    recordId:"기록 ID",updated:"최종 업데이트",allergyAlert:"약물 알레르기",bloodType:"혈액형",allergy:"주요 알레르기",chronic:"만성질환",emergency:"비상 연락처",
+    navBasic:"기본 정보",navAllergy:"알레르기 및 주의",navDisease:"질병 이력",navSurgery:"수술 / 입원 이력",navMeds:"복약 이력",navFamily:"가족력",navSocial:"생활 / 사회력",navVaccine:"예방접종",navDevices:"이식물 / 보조기기",navEmergency:"비상 연락",
+    editingHint:"편집 모드입니다. 파란 테두리의 텍스트를 클릭해 수정할 수 있으며 변경 내용은 이 브라우저에 저장됩니다.",
+    basicTitle:"개인 기본 정보",fullName:"이름",dob:"생년월일",sex:"생물학적 성별",nationality:"국적",heightWeight:"키 / 체중",blood:"혈액형 / Rh",address:"주소",phone:"전화",insurance:"보험 / 건강 ID",
+    allergyTitle:"알레르기 및 중요 경고",drugAllergy:"약물 알레르기",foodAllergy:"음식 알레르기",otherAllergy:"기타 알레르기",specialAlert:"특별 주의",
+    diseaseTitle:"현재 질환 및 과거력",surgeryTitle:"수술·입원·주요 시술 이력",
+    medsTitle:"현재 및 과거 복용약",medName:"약물명",dose:"용량",frequency:"복용 빈도",purpose:"용도",
+    familyTitle:"가족 질병력",father:"부계",mother:"모계",familyOther:"기타 중요한 가족력",
+    socialTitle:"생활 및 사회력",smoking:"흡연",alcohol:"음주",exercise:"운동",diet:"식습관",occupation:"직업",travel:"최근 여행 / 노출",
+    vaccineTitle:"예방접종 이력",devicesTitle:"이식물·의료기기·보조기기",implant:"이식물",assistive:"보조기기",deviceNote:"기기 주의사항",
+    emergencyTitle:"비상 연락 및 주요 의료 정보",contactName:"비상 연락인",relation:"관계",contactPhone:"연락처",physician:"주치의 / 의료기관",advance:"사전의료의향 / 중요 요청",
+    notice:"이 페이지는 휴대 및 의사소통을 위한 개인 건강 요약입니다. 공식 의무기록, 의사의 진단 또는 응급의료 판단을 대신하지 않습니다. 정보가 바뀌면 반드시 업데이트하십시오.",
+    footer:"MyHealth Passport · 다국어 개인 건강기록｜보호된 개인 기기에만 저장하고 민감한 개인정보가 포함된 버전을 공개하지 마십시오."
+  },
+  vi:{
+    appTitle:"MyHealth Passport",appSubtitle:"Hồ sơ sức khỏe đa ngôn ngữ mang theo",privacy:"Chế độ riêng tư",edit:"Chỉnh sửa hồ sơ",save:"Hoàn tất chỉnh sửa",print:"In / PDF",
+    eyebrow:"Portable Multilingual Health Record",heroTitle:"Hộ chiếu sức khỏe của tôi",
+    heroText:"Tóm tắt thông tin cá nhân, dị ứng, bệnh sử, phẫu thuật, thuốc đang dùng, tiền sử gia đình và liên hệ khẩn cấp; có thể đổi ngôn ngữ nhanh khi đi du lịch hoặc khám bệnh.",
+    recordId:"Mã hồ sơ",updated:"Cập nhật lần cuối",allergyAlert:"Dị ứng thuốc",bloodType:"Nhóm máu",allergy:"Dị ứng chính",chronic:"Bệnh mạn tính",emergency:"Liên hệ khẩn cấp",
+    navBasic:"Thông tin cơ bản",navAllergy:"Dị ứng & Cảnh báo",navDisease:"Bệnh sử",navSurgery:"Phẫu thuật / Nhập viện",navMeds:"Thuốc",navFamily:"Tiền sử gia đình",navSocial:"Lối sống & Xã hội",navVaccine:"Tiêm chủng",navDevices:"Thiết bị / Dụng cụ hỗ trợ",navEmergency:"Liên hệ khẩn cấp",
+    editingHint:"Đang ở chế độ chỉnh sửa. Nhấp vào phần chữ có viền xanh để thay đổi. Dữ liệu được lưu trong trình duyệt này.",
+    basicTitle:"Thông tin cá nhân",fullName:"Họ tên",dob:"Ngày sinh",sex:"Giới tính sinh học",nationality:"Quốc tịch",heightWeight:"Chiều cao / Cân nặng",blood:"Nhóm máu / Rh",address:"Địa chỉ",phone:"Điện thoại",insurance:"Bảo hiểm / Mã y tế",
+    allergyTitle:"Dị ứng & Cảnh báo quan trọng",drugAllergy:"Dị ứng thuốc",foodAllergy:"Dị ứng thực phẩm",otherAllergy:"Dị ứng khác",specialAlert:"Cảnh báo đặc biệt",
+    diseaseTitle:"Bệnh hiện tại & Tiền sử bệnh",surgeryTitle:"Phẫu thuật, nhập viện & thủ thuật lớn",
+    medsTitle:"Thuốc hiện tại & trước đây",medName:"Tên thuốc",dose:"Liều",frequency:"Tần suất",purpose:"Mục đích",
+    familyTitle:"Tiền sử bệnh gia đình",father:"Bên cha",mother:"Bên mẹ",familyOther:"Tiền sử gia đình quan trọng khác",
+    socialTitle:"Lối sống & Tiền sử xã hội",smoking:"Hút thuốc",alcohol:"Rượu bia",exercise:"Vận động",diet:"Chế độ ăn",occupation:"Nghề nghiệp",travel:"Du lịch / Phơi nhiễm gần đây",
+    vaccineTitle:"Lịch sử tiêm chủng",devicesTitle:"Thiết bị cấy ghép, thiết bị y tế & dụng cụ hỗ trợ",implant:"Thiết bị cấy ghép",assistive:"Dụng cụ hỗ trợ",deviceNote:"Lưu ý về thiết bị",
+    emergencyTitle:"Liên hệ khẩn cấp & Thông tin chăm sóc chính",contactName:"Người liên hệ khẩn cấp",relation:"Quan hệ",contactPhone:"Điện thoại",physician:"Bác sĩ / Cơ sở điều trị chính",advance:"Chỉ dẫn trước / Nguyện vọng quan trọng",
+    notice:"Trang này là bản tóm tắt sức khỏe cá nhân để mang theo và hỗ trợ giao tiếp. Không thay thế hồ sơ y tế chính thức, chẩn đoán của bác sĩ hoặc quyết định y tế khẩn cấp. Hãy cập nhật dữ liệu thường xuyên.",
+    footer:"MyHealth Passport · Hồ sơ sức khỏe cá nhân đa ngôn ngữ｜Chỉ lưu trên thiết bị cá nhân được bảo vệ và tránh công khai phiên bản có dữ liệu nhạy cảm."
+  }
+};
+
+let editing = false;
+let privacy = false;
+
+function setLanguage(lang){
+  document.documentElement.lang = ({zh:"zh-Hant",en:"en",ja:"ja",ko:"ko",vi:"vi"})[lang] || "zh-Hant";
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key = el.dataset.i18n;
+    if(translations[lang] && translations[lang][key]) el.textContent = translations[lang][key];
+  });
+  document.getElementById("editBtn").textContent = translations[lang][editing ? "save" : "edit"];
+  localStorage.setItem("mh_jws_v3_lang",lang);
+}
+
+function togglePrivacy(){
+  privacy=!privacy;
+  document.body.classList.toggle("privacy-mask",privacy);
+  document.getElementById("privacyBtn").style.background = privacy ? "#e3f5fe" : "#fff";
+}
+
+function toggleEdit(){
+  editing=!editing;
+  document.body.classList.toggle("edit-mode",editing);
+  document.querySelectorAll(".editable").forEach(el=>{
+    el.contentEditable = editing ? "true":"false";
+  });
+  const lang = document.getElementById("langSelect").value;
+  document.getElementById("editBtn").textContent = translations[lang][editing ? "save" : "edit"];
+}
+
+function saveValue(el){
+  const key=el.dataset.key;
+  if(key) localStorage.setItem("mh_jws_v3_"+key,el.innerText.trim());
+}
+function loadValues(){
+  document.querySelectorAll(".editable[data-key]").forEach(el=>{
+    const v=localStorage.getItem("mh_jws_v3_"+el.dataset.key);
+    if(v!==null) el.textContent=v;
+    el.addEventListener("input",()=>saveValue(el));
+  });
+}
+
+document.getElementById("langSelect").addEventListener("change",e=>setLanguage(e.target.value));
+document.getElementById("privacyBtn").addEventListener("click",togglePrivacy);
+document.getElementById("editBtn").addEventListener("click",toggleEdit);
+
+loadValues();
+const savedLang=localStorage.getItem("mh_jws_v3_lang") || "zh";
+document.getElementById("langSelect").value=savedLang;
+setLanguage(savedLang);
+</script>
+</body>
+</html>
